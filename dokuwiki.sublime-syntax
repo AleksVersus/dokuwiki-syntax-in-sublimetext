@@ -1,0 +1,175 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+
+# dokuwiki syntax highlight
+name: "DokuWiki"
+file_extensions:
+  - dokuwiki
+  - dw
+  - dwiki
+scope: text.dokuwiki
+
+contexts:
+  main:
+    - include: heading   
+    - include: bold
+    - include: italic
+    - include: bullet
+    - include: monotype
+    - include: qsptags
+    - include: codetags
+    - include: underline
+
+    - match: (\[\[)(\S+)(\|.+)+(\]\])
+      captures:
+        1: punctuation.definition.metadata.end.markdown
+        2: meta.link.inline.metadata.dokuwiki markup.underline.link.dokuwiki
+        3: meta.link.inline.description.dokuwiki
+        4: punctuation.definition.metadata.end.markdown
+        
+    # Newline markup
+    - match: (\\\\)
+      push:
+        - meta_scope: meta.tag
+        - match: '\n'
+          scope: meta.tag
+          pop: true
+
+    # Cloud tags
+    - match: ({{/?)([a-zA-Z0-9:]+)
+      captures:
+        1: meta.tag
+        2: entity.name.tag
+      push:
+        - meta_scope: meta.tag
+        - match: '}}'
+          scope: meta.tag
+          pop: true
+        - include: tag-stuff
+        - match: '.'
+          scope: markup.inserted
+
+    # More Cloud tags
+    - match: (~~)
+      push:
+        - meta_scope: meta.tag
+        - match: '~~'
+          scope: meta.tag
+          pop: true
+        - match: '.'
+          scope: constant.character
+
+    # IndexMenu tags
+    - match: ({{indexmenu_n>)
+      push:
+        - meta_scope: meta.tag
+        - match: '}}'
+          scope: meta.tag
+          pop: true
+        - match: '.'
+          scope: constant.character
+
+  heading:
+    - match: '^(======)\s+(.+?)\s+(\1)'
+      scope: markup.heading.1.dokuwiki
+      captures:
+        1: punctuation.definition.heading.begin.dokuwiki
+        2: entity.name.section.dokuwiki
+        3: punctuation.definition.heading.begin.dokuwiki
+    - match: '^(=====)\s+(.+?)\s+(\1)'
+      scope: markup.heading.2.dokuwiki
+      captures:
+        1: punctuation.definition.heading.begin.dokuwiki
+        2: entity.name.section.dokuwiki
+        3: punctuation.definition.heading.begin.dokuwiki
+    - match: '^(====)\s+(.+?)\s+(\1)'
+      scope: markup.heading.3.dokuwiki
+      captures:
+        1: punctuation.definition.heading.begin.dokuwiki
+        2: entity.name.section.dokuwiki
+        3: punctuation.definition.heading.begin.dokuwiki
+    - match: '^(===)\s+(.+?)\s+(\1)'
+      scope: markup.heading.4.dokuwiki
+      captures:
+        1: punctuation.definition.heading.begin.dokuwiki
+        2: entity.name.section.dokuwiki
+        3: punctuation.definition.heading.begin.dokuwiki
+    - match: '^(==)\s+(.+?)\s+(\1)'
+      scope: markup.heading.5.dokuwiki
+      captures:
+        1: punctuation.definition.heading.begin.markdown
+        2: entity.name.section.dokuwiki
+        3: punctuation.definition.heading.begin.markdown
+    - match: '^(=)\s+(.+?)\s+(\1)'
+      scope: markup.heading.6.dokuwiki
+      captures:
+        1: punctuation.definition.heading.begin.markdown
+        2: entity.name.section.dokuwiki
+        3: punctuation.definition.heading.begin.markdown
+
+  bold:
+    - match: \*{2}\S
+      push:
+        - meta_scope: markup.bold.dokuwiki
+        - match: \S\*{2}
+          pop: true
+        - include: italic
+        - include: monotype
+        - include: underline
+
+  underline:
+    - match: __(?=\S)
+      push:
+        - meta_scope: markup.underline.dokuwiki
+        - match: (?<=\S)__
+          pop: true
+        - include: italic
+        - include: monotype
+        - include: bold
+
+  italic: 
+    - match: (?<!https:|http:)\/\/  # This handles cases when there are urls, which breaks the highlighting
+      push:
+        - meta_scope: markup.italic.dokuwiki
+        - match: '\/\/'
+          pop: true
+        - include: bold
+        - include: monotype
+        - include: underline
+
+  monotype:
+    - match: \'{2}\S(.*?\S)?\'{2}
+      scope: markup.raw.inline.dokuwiki
+    - include: bold
+    - include: italic
+    - include: underline
+
+
+  bullet:
+    - match: (^\s+\*\s)
+      scope: markup.list.unnumbered.dokuwiki
+    - match: (^\s+\-\s)
+      scope: markup.list.numbered.dokuwiki
+
+  qsptags:
+    - match: (?i:<sxh\s+qsp>)
+      scope: entity.name.tag.inline.any.html
+      push:
+        - meta_scope: markup.raw
+        - include: Packages/QSP/qsp_locations.sublime-syntax
+      with_prototype:
+        - match: (?i:</sxh>)
+          scope: entity.name.tag.inline.any.html
+          pop: true
+
+  codetags:
+    - match: (?i:<(sxh|code)(\s+\w+)?>)
+      scope: entity.name.tag.inline.any.html
+      push:
+        - clear_scopes: true
+        - meta_scope: markup.raw
+      with_prototype:
+        - match: (?i:</(sxh|code)>)
+          scope: entity.name.tag.inline.any.html
+          pop: true
