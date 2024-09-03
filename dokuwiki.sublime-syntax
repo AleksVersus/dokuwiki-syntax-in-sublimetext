@@ -20,13 +20,7 @@ contexts:
     - include: qsptags
     - include: codetags
     - include: underline
-
-    - match: (\[\[)(\S+)(\|.+)+(\]\])
-      captures:
-        1: punctuation.definition.metadata.end.markdown
-        2: meta.link.inline.metadata.dokuwiki markup.underline.link.dokuwiki
-        3: meta.link.inline.description.dokuwiki
-        4: punctuation.definition.metadata.end.markdown
+    - include: wikilinks
         
     # Newline markup
     - match: (\\\\)
@@ -69,6 +63,13 @@ contexts:
           pop: true
         - match: '.'
           scope: constant.character
+  wikilinks:
+    - match: (\[\[)(\S+)(\|.+)+(\]\])
+      captures:
+        1: punctuation.definition.metadata.end.markdown
+        2: meta.link.inline.metadata.dokuwiki markup.underline.link.dokuwiki
+        3: meta.link.inline.description.dokuwiki
+        4: punctuation.definition.metadata.end.markdown
 
   heading:
     - match: '^(======)\s+(.+?)\s+(\1)'
@@ -117,6 +118,7 @@ contexts:
         - include: italic
         - include: monotype
         - include: underline
+        - include: wikilinks
 
   underline:
     - match: __(?=\S)
@@ -127,6 +129,7 @@ contexts:
         - include: italic
         - include: monotype
         - include: bold
+        - include: wikilinks
 
   italic: 
     - match: (?<!https:|http:)\/\/  # This handles cases when there are urls, which breaks the highlighting
@@ -137,6 +140,7 @@ contexts:
         - include: bold
         - include: monotype
         - include: underline
+        - include: wikilinks
 
   monotype:
     - match: \'{2}(?=\S)
@@ -147,6 +151,7 @@ contexts:
         - include: bold
         - include: italic
         - include: underline
+        - include: wikilinks
 
 
   bullet:
