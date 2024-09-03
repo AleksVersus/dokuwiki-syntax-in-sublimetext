@@ -109,10 +109,10 @@ contexts:
         3: punctuation.definition.heading.begin.markdown
 
   bold:
-    - match: \*{2}\S
+    - match: \*{2}(?=\S)
       push:
         - meta_scope: markup.bold.dokuwiki
-        - match: \S\*{2}
+        - match: (?<=\S)\*{2}
           pop: true
         - include: italic
         - include: monotype
@@ -139,11 +139,14 @@ contexts:
         - include: underline
 
   monotype:
-    - match: \'{2}\S(.*?\S)?\'{2}
-      scope: markup.raw.inline.dokuwiki
-    - include: bold
-    - include: italic
-    - include: underline
+    - match: \'{2}(?=\S)
+      push:
+        - meta_scope: markup.raw.inline.dokuwiki
+        - match: (?<=\S)\'{2}
+          pop: true 
+        - include: bold
+        - include: italic
+        - include: underline
 
 
   bullet:
