@@ -7,3 +7,6 @@ This is semantic broken clone of dokuwiki syntax highlight by https://github.com
 
 ## install
 Open you packages folder, and copy into file dokuwiki.sublime-syntax.
+
+
+![image](https://github.com/user-attachments/assets/6b208f78-2c5f-4dfd-b80f-63f00e26216d)
