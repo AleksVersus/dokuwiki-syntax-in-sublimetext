@@ -63,8 +63,9 @@ contexts:
           pop: true
         - match: '.'
           scope: constant.character
+
   wikilinks:
-    - match: (\[\[)(\S+)(\|.+)+(\]\])
+    - match: (\[\[)(\S+?)(\|.+?)+?(\]\])
       captures:
         1: punctuation.definition.metadata.end.markdown
         2: meta.link.inline.metadata.dokuwiki markup.underline.link.dokuwiki
